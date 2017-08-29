@@ -266,13 +266,19 @@
         "Content-Security-Policy": default_security_headers["Content-Security-Policy"]
       };
       delete req.headers.cookie;
-      ref2 = url.pathname.replace(/^\//, '').split("/", 2), query_digest = ref2[0], encoded_url = ref2[1];
+      ref2 = url.pathname.replace(/^\/camo\//, '').split("/", 2), query_digest = ref2[0], encoded_url = ref2[1];
       if (encoded_url = hexdec(encoded_url)) {
         url_type = 'path';
         dest_url = encoded_url;
       } else {
         url_type = 'query';
-        dest_url = QueryString.parse(url.query).url;
+        //dest_url = QueryString.parse(url.query).url;
+		dest_url = url.query;
+		if (dest_url == null) {
+			return four_oh_four(resp, "No pathname provided on the server");
+		}
+		dest_url = dest_url.replace("url=", "");
+		dest_url = decodeURIComponent(dest_url);
       }
       debug_log({
         type: url_type,
